@@ -8,11 +8,14 @@
 
         <script id="vertexShader" type="x-shader/x-vertex">
             varying vec2 vUv;
+            attribute float displacement;
+            varying vec3 vNormal;
 
             void main() {
+                vNormal = normal;
                 vUv = uv;
-                vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-                gl_Position = projectionMatrix * mvPosition;
+                vec3 newPos = position + normal * vec3(displacement);
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0 );
             }
 
         </script>
@@ -20,6 +23,7 @@
 			uniform float time;
 			uniform vec2 resolution;
 			varying vec2 vUv;
+            varying vec3 vNormal;
             
             void main( void ) {
 
@@ -30,6 +34,7 @@
 			color += sin( position.x * sin( time / 5.0 ) * 10.0 ) + sin( position.y * sin( time / 35.0 ) * 80.0 );
 			color *= sin( time / 10.0 ) * 0.5;
 			gl_FragColor = vec4( vec3( color, color * 0.5, sin( color + time / 3.0 ) * 0.75 ), 1.0 );
+			//gl_FragColor = vec4( position.x, 0.0, 0.0, 1.0 );
 
 			}
 
@@ -99,13 +104,24 @@
                 resolution: { type: "v2", value: new THREE.Vector2() }
             };
 
+            var attributes = {
+                displacement: { type: "f", value: [] }
+            };
+
             var material = new THREE.ShaderMaterial({
                 uniforms: uniforms,
+                attributes: attributes,
                 vertexShader: document.getElementById( 'vertexShader' ).textContent,
                 fragmentShader: document.getElementById( 'fragmentShader' ).textContent
             });
 
             var cube = new THREE.Mesh(geometry, material);
+            var verts = cube.geometry.vertices;
+            var values = attributes.displacement.value;
+
+            for (var v = 0; v < verts.length; v++) {
+                values.push(Math.random() * 0.15);
+            }
             scene.add(cube);
 
             function onWindowResize( event ) {
@@ -128,6 +144,8 @@
                 renderer.render(scene, camera);
             }
 
+            onWindowResize();
+            window.addEventListener( 'resize', onWindowResize, false );
             render();
 
 

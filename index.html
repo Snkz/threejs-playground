@@ -10,11 +10,12 @@
             varying vec2 vUv;
             attribute float displacement;
             varying vec3 vNormal;
+            uniform float amp;
 
             void main() {
                 vNormal = normal;
                 vUv = uv;
-                vec3 newPos = position + normal * vec3(displacement);
+                vec3 newPos = position + normal * vec3(displacement * amp);
                 gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0 );
             }
 
@@ -101,6 +102,7 @@
             // post proc
             var uniforms = {
                 time: { type: "f", value: 1.0 },
+                amp: { type: "f", value: 0.0 },
                 resolution: { type: "v2", value: new THREE.Vector2() }
             };
 
@@ -137,6 +139,7 @@
 
                 var delta = clock.getDelta();
                 uniforms.time.value += delta * 5;     
+                uniforms.amp.value = Math.sin(uniforms.time.value);     
 
                 cube.rotation.x += 0.1;
                 cube.rotation.y += 0.1;

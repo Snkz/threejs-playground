@@ -5,12 +5,42 @@
     </head>
     <body>
         <script src="js/three.min.js"></script>
+
+        <script id="vertexShader" type="x-shader/x-vertex">
+            varying vec2 vUv;
+
+            void main() {
+                vUv = uv;
+                vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+                gl_Position = projectionMatrix * mvPosition;
+            }
+
+        </script>
+        <script id="fragmentShader" type="x-shader/x-fragment">
+			uniform float time;
+			uniform vec2 resolution;
+			varying vec2 vUv;
+            
+            void main( void ) {
+
+			vec2 position = vUv;
+			float color = 0.0;
+			color += sin( position.x * cos( time / 15.0 ) * 80.0 ) + cos( position.y * cos( time / 15.0 ) * 10.0 );
+			color += sin( position.y * sin( time / 10.0 ) * 40.0 ) + cos( position.x * sin( time / 25.0 ) * 40.0 );
+			color += sin( position.x * sin( time / 5.0 ) * 10.0 ) + sin( position.y * sin( time / 35.0 ) * 80.0 );
+			color *= sin( time / 10.0 ) * 0.5;
+			gl_FragColor = vec4( vec3( color, color * 0.5, sin( color + time / 3.0 ) * 0.75 ), 1.0 );
+
+			}
+
+		</script>
         <script>
             // our bs goes here
             var scene = new THREE.Scene();
             scene.fog = new THREE.Fog( 0xcce0ff, 500, 10000 );
-            // camera
+            var clock = new THREE.Clock();
 
+            // camera
             var camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 10000 );
             camera.position.y = 0;
             camera.position.z = 10;
@@ -61,20 +91,45 @@
             document.body.appendChild(renderer.domElement);
 
             var geometry = new THREE.CubeGeometry(1,1,1);
-            var material = new THREE.MeshBasicMaterial( {color: 0x0000ff} );
+            //var material = new THREE.MeshBasicMaterial( {color: 0x0000ff} );
+
+            // post proc
+            var uniforms = {
+                time: { type: "f", value: 1.0 },
+                resolution: { type: "v2", value: new THREE.Vector2() }
+            };
+
+            var material = new THREE.ShaderMaterial({
+                uniforms: uniforms,
+                vertexShader: document.getElementById( 'vertexShader' ).textContent,
+                fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+            });
+
             var cube = new THREE.Mesh(geometry, material);
             scene.add(cube);
 
+            function onWindowResize( event ) {
+                uniforms.resolution.value.x = window.innerWidth;
+                uniforms.resolution.value.y = window.innerHeight;
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize( window.innerWidth, window.innerHeight );
+            }
 
             function render() {
                 requestAnimationFrame(render);
-                
+
+                var delta = clock.getDelta();
+                uniforms.time.value += delta * 5;     
+
                 cube.rotation.x += 0.1;
                 cube.rotation.y += 0.1;
               
                 renderer.render(scene, camera);
             }
+
             render();
+
 
 
         </script>

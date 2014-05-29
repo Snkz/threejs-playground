@@ -21,25 +21,105 @@
 
         </script>
         <script id="fragmentShader" type="x-shader/x-fragment">
-			uniform float time;
-			uniform vec2 resolution;
-			varying vec2 vUv;
+            uniform float time;
+            uniform vec2 resolution;
+            varying vec2 vUv;
             varying vec3 vNormal;
-            
+
             void main( void ) {
 
-			vec2 position = vUv;
-			float color = 0.0;
-			color += sin( position.x * cos( time / 15.0 ) * 80.0 ) + cos( position.y * cos( time / 15.0 ) * 10.0 );
-			color += sin( position.y * sin( time / 10.0 ) * 40.0 ) + cos( position.x * sin( time / 25.0 ) * 40.0 );
-			color += sin( position.x * sin( time / 5.0 ) * 10.0 ) + sin( position.y * sin( time / 35.0 ) * 80.0 );
-			color *= sin( time / 10.0 ) * 0.5;
-			gl_FragColor = vec4( vec3( color, color * 0.5, sin( color + time / 3.0 ) * 0.75 ), 1.0 );
-			//gl_FragColor = vec4( position.x, 0.0, 0.0, 1.0 );
+            vec2 position = vUv;
+            float color = 0.0;
+            color += sin( position.x * cos( time / 15.0 ) * 80.0 ) + cos( position.y * cos( time / 15.0 ) * 10.0 );
+            color += sin( position.y * sin( time / 10.0 ) * 40.0 ) + cos( position.x * sin( time / 25.0 ) * 40.0 );
+            color += sin( position.x * sin( time / 5.0 ) * 10.0 ) + sin( position.y * sin( time / 35.0 ) * 80.0 );
+            color *= sin( time / 10.0 ) * 0.5;
+            gl_FragColor = vec4( vec3( color, color * 0.5, sin( color + time / 3.0 ) * 0.75 ), 1.0 );
+            //gl_FragColor = vec4( position.x, 0.0, 0.0, 1.0 );
 
-			}
+            }
+        </script>
+        <script id="mandshader-fs" type="x-shader/x-fragment">
+            precision mediump float;
 
-		</script>
+            uniform float time;
+            uniform vec2 resolution;
+            varying vec2 vUv;
+            varying vec3 vNormal;
+
+
+            void main(void) {
+                vec2 position = vUv;
+                float cx = position.x * 3.5 - 2.5;
+                float cy = position.y * 2.0 - 1.0;
+
+                //float cx = position.x;
+                //float cy = position.y;
+
+                float hue;
+                float saturation;
+                float value;
+                float hueRound;
+                int hueIndex;
+                float f;
+                float p;
+                float q;
+                float t;
+
+
+                float x = 0.0;
+                float y = 0.0;
+                float tempX = 0.0;
+                int i = 0;
+                int runaway = 0;
+                for (int i=0; i < 100; i++) {
+                    tempX = x * x - y * y + float(cx);
+                    y = 2.0 * x * y + float(cy);
+                    x = tempX;
+                    if (runaway == 0 && x * x + y * y > 100.0) {
+                        runaway = i;
+                        break;
+                    }
+                }
+
+                if (runaway != 0) {
+                    // HS -> RGB COLOURING
+                    //hue = float(runaway) / 200.0;
+                    //saturation = 0.6;
+                    //value = 1.0;
+
+                    //hueRound = hue * 6.0;
+                    //hueIndex = int(mod(float(int(hueRound)), 6.0));
+                    //f = fract(hueRound);
+                    //p = value * (1.0 - saturation);
+                    //q = value * (1.0 - f * saturation);
+                    //t = value * (1.0 - (1.0 - f) * saturation);
+
+                    //if (hueIndex == 0)
+                    //gl_FragColor = vec4(value, t, p, 1.0);
+                    //else if (hueIndex == 1)
+                    //gl_FragColor = vec4(q, value, p, 1.0);
+                    //else if (hueIndex == 2)
+                    //gl_FragColor = vec4(p, value, t, 1.0);
+                    //else if (hueIndex == 3)
+                    //gl_FragColor = vec4(p, q, value, 1.0);
+                    //else if (hueIndex == 4)
+                    //gl_FragColor = vec4(t, p, value, 1.0);
+                    //else if (hueIndex == 5)
+                    //gl_FragColor = vec4(value, p, q, 1.0);
+
+                    //} else {
+                    //gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+                    //NIC COLOURING
+                    float z = sqrt(x*x + y*y);
+                    float br = log2(1.75 + float(runaway) - log2(log2(z))) / log2(100.0);
+                    //float br = float(runaway) / 100.0;
+                    gl_FragColor = vec4(br, br, 1.0, 1.0);
+                } else {
+                    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+             }
+            }
+        </script>
         <script>
             // our bs goes here
             var scene = new THREE.Scene();
@@ -76,10 +156,10 @@
             var initColor = new THREE.Color( 0x497f13 );
             var initTexture = THREE.ImageUtils.generateDataTexture( 1, 1, initColor );
             var groundMaterial = new THREE.MeshPhongMaterial( 
-                { color: 0xffffff, specular: 0x111111, map: initTexture } );
+            { color: 0xffffff, specular: 0x111111, map: initTexture } );
 
             var groundTexture = THREE.ImageUtils.loadTexture( "textures/grasslight-big.jpg", 
-                undefined, function() { groundMaterial.map = groundTexture } );
+            undefined, function() { groundMaterial.map = groundTexture } );
 
             groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
             groundTexture.repeat.set( 25, 25 );
@@ -96,7 +176,7 @@
             renderer.setClearColor( scene.fog.color );
             document.body.appendChild(renderer.domElement);
 
-            var geometry = new THREE.CubeGeometry(1,1,1);
+            var geometry = new THREE.CubeGeometry(5,5,5);
             //var material = new THREE.MeshBasicMaterial( {color: 0x0000ff} );
 
             // post proc
@@ -114,7 +194,7 @@
                 uniforms: uniforms,
                 attributes: attributes,
                 vertexShader: document.getElementById( 'vertexShader' ).textContent,
-                fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+                fragmentShader: document.getElementById( 'mandshader-fs' ).textContent
             });
 
             var cube = new THREE.Mesh(geometry, material);
@@ -124,6 +204,7 @@
             for (var v = 0; v < verts.length; v++) {
                 values.push(Math.random() * 0.15);
             }
+
             scene.add(cube);
 
             function onWindowResize( event ) {
@@ -143,7 +224,7 @@
 
                 cube.rotation.x += 0.1;
                 cube.rotation.y += 0.1;
-              
+
                 renderer.render(scene, camera);
             }
 
@@ -156,4 +237,4 @@
         </script>
     </body>
 </html>
-           
+

@@ -225,7 +225,7 @@
 	        // click events
 	        function onDocumentMouseDown( event ) {
 
-        	    event.preventDefault();
+        	    //event.preventDefault();
         
         	    document.addEventListener( 'mousemove', onDocumentMouseMove, false );
         	    document.addEventListener( 'mouseup', onDocumentMouseUp, false );
@@ -247,7 +247,8 @@
 	        	targetRotationY = targetRotationOnMouseDownY + ( mouseY - mouseYOnMouseDown ) * 0.20;
 	        };
 
-	        function onDocumentMouseUp( event ) {
+            // add remove event listeners on the fly
+            function onDocumentMouseUp( event ) {
 
 	        	document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
 	        	document.removeEventListener( 'mouseup', onDocumentMouseUp, false );

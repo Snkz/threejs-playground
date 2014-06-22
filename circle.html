@@ -1,0 +1,219 @@
+<html>
+    <head>
+        <title> Threejs bs </title>
+        <style> canvas { width: 100%; height: 100% } 
+                #hey { margin 0px auto; width: 100px; height: 100px; float: left; } 
+        </style>
+    </head>
+    <body>
+        <div id="hey">
+        <script src="js/three.min.js"></script>
+
+        <script id="vertexShader" type="x-shader/x-vertex">
+            varying vec2 vUv;
+            attribute float displacement;
+            varying vec3 vNormal;
+            uniform float amp;
+
+            void main() {
+                vNormal = normal;
+                vUv = uv;
+                vec3 newPos = position + normal * vec3(displacement * 1.0);
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0 );
+            }
+
+        </script>
+        <script id="fragmentShader" type="x-shader/x-fragment">
+            uniform float time;
+            uniform vec2 resolution;
+            varying vec2 vUv;
+            varying vec3 vNormal;
+
+            void main( void ) {
+
+            vec2 position = vUv;
+            float color = 0.0;
+            color += sin( position.x * cos( time / 15.0 ) * 80.0 ) + cos( position.y * cos( time / 15.0 ) * 10.0 );
+            color += sin( position.y * sin( time / 10.0 ) * 40.0 ) + cos( position.x * sin( time / 25.0 ) * 40.0 );
+            color += sin( position.x * sin( time / 5.0 ) * 10.0 ) + sin( position.y * sin( time / 35.0 ) * 80.0 );
+            color *= sin( time / 10.0 ) * 0.5;
+            gl_FragColor = vec4( vec3( color, color * 0.5, sin( color + time / 3.0 ) * 0.75 ), 1.0 );
+            //gl_FragColor = vec4( position.x, 0.0, 0.0, 1.0 );
+
+            }
+        </script>
+        <script id="mandshader-fs" type="x-shader/x-fragment">
+            precision mediump float;
+
+            uniform float time;
+            uniform vec2 resolution;
+            varying vec2 vUv;
+            varying vec3 vNormal;
+
+
+            void main(void) {
+                vec2 position = vUv;
+                float cx = position.x * 3.5 - 2.5;
+                float cy = position.y * 2.0 - 1.0;
+
+                //float cx = position.x;
+                //float cy = position.y;
+
+                float hue;
+                float saturation;
+                float value;
+                float hueRound;
+                int hueIndex;
+                float f;
+                float p;
+                float q;
+                float t;
+
+
+                float x = 0.0;
+                float y = 0.0;
+                float tempX = 0.0;
+                int i = 0;
+                int runaway = 0;
+                for (int i=0; i < 100; i++) {
+                    tempX = x * x - y * y + float(cx);
+                    y = 2.0 * x * y + float(cy);
+                    x = tempX;
+                    if (runaway == 0 && x * x + y * y > 100.0) {
+                        runaway = i;
+                        break;
+                    }
+                }
+
+                if (runaway != 0) {
+                    //NIC COLOURING
+                    float z = sqrt(x*x + y*y);
+                    float br = log2(1.75 + float(runaway) - log2(log2(z))) / log2(100.0);
+                    //float br = float(runaway) / 100.0;
+                    gl_FragColor = vec4(br, br, 1.0, 1.0);
+                } else {
+                    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+             }
+            }
+        </script>
+        <script>
+            var mahname = "hey";
+            var div = document.getElementById(mahname); 
+            // our bs goes here
+            var scene = new THREE.Scene();
+            scene.fog = new THREE.Fog( 0xcce0ff, 500, 10000 );
+            var clock = new THREE.Clock();
+
+            // camera
+            var camera = new THREE.PerspectiveCamera( 30, div.offsetWidth / div.offsetHeight, 1, 10000 );
+            camera.position.y = 0;
+            camera.position.z = 10;
+            scene.add( camera );
+
+            var light = new THREE.DirectionalLight( 0x404040 ); 
+            light.position.set( 50, 200, 100 );
+            light.position.multiplyScalar( 1.3 );
+            light.castShadow = true;
+            light.shadowMapWidth = 2048;
+            light.shadowMapHeight = 2048;
+
+            var d = 300;
+            light.shadowCameraLeft = -d;
+            light.shadowCameraRight = d;
+            light.shadowCameraTop = d;
+            light.shadowCameraBottom = -d;
+            light.shadowCameraFar = 1000;
+            light.shadowDarkness = 0.5;
+            scene.add( light );
+
+            light = new THREE.DirectionalLight( 0x3dff0c, 0.35 );
+            light.position.set( 0, -1, 0 );
+            scene.add( light );
+
+            // ground
+            var initColor = new THREE.Color( 0x497f13 );
+            var initTexture = THREE.ImageUtils.generateDataTexture( 1, 1, initColor );
+            var groundMaterial = new THREE.MeshPhongMaterial( 
+            { color: 0xffffff, specular: 0x111111, map: initTexture } );
+
+            var groundTexture = THREE.ImageUtils.loadTexture( "textures/grasslight-big.jpg", 
+            undefined, function() { groundMaterial.map = groundTexture } );
+
+            groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
+            groundTexture.repeat.set( 25, 25 );
+            groundTexture.anisotropy = 16;
+
+            var mesh = new THREE.Mesh( new THREE.PlaneGeometry( 20000, 20000 ), groundMaterial );
+            mesh.position.y = -250;
+            mesh.rotation.x = - Math.PI / 2;
+            mesh.receiveShadow = true;
+            scene.add( mesh );
+
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize(div.offsetWidth, div.offsetHeight);
+            renderer.setClearColor( scene.fog.color );
+            div.appendChild(renderer.domElement);
+
+            var geometry = new THREE.SphereGeometry(1,100,100);
+            //var material = new THREE.MeshBasicMaterial( {color: 0x0000ff} );
+
+            // post proc
+            var uniforms = {
+                time: { type: "f", value: 1.0 },
+                amp: { type: "f", value: 0.0 },
+                resolution: { type: "v2", value: new THREE.Vector2() }
+            };
+
+            var attributes = {
+                displacement: { type: "f", value: [] }
+            };
+
+            var material = new THREE.ShaderMaterial({
+                uniforms: uniforms,
+                attributes: attributes,
+                vertexShader: document.getElementById( 'vertexShader' ).textContent,
+                fragmentShader: document.getElementById( 'mandshader-fs' ).textContent
+            });
+
+            var sphere = new THREE.Mesh(geometry, material);
+            var verts = sphere.geometry.vertices;
+            var values = attributes.displacement.value;
+
+            for (var v = 0; v < verts.length; v++) {
+                values.push(Math.random() * 0.25);
+            }
+
+            scene.add(sphere);
+
+            function onWindowResize( event ) {
+                uniforms.resolution.value.x = div.offsetWidth;
+                uniforms.resolution.value.y = div.offsetHeight;
+                camera.aspect = div.offsetWidth / div.offsetHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize( div.offsetWidth, div.offsetHeight );
+            }
+
+            function render() {
+                requestAnimationFrame(render);
+
+                var delta = clock.getDelta();
+                uniforms.time.value += delta * 5;     
+                uniforms.amp.value = Math.sin(uniforms.time.value) * 1;     
+
+                sphere.rotation.x += 0.2;
+                sphere.rotation.y += 0.1;
+
+                renderer.render(scene, camera);
+            }
+
+            onWindowResize();
+            window.addEventListener( 'resize', onWindowResize, false );
+            render();
+
+
+
+        </script>
+        </div>
+    </body>
+</html>
+

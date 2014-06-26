@@ -2,7 +2,7 @@
     <head>
         <title> Threejs bs </title>
         <style> canvas { width: 100%; height: 100% } 
-                #hey { margin 0px auto; width: 100px; height: 100px; float: left; } 
+                #hey { margin 0px auto; width: 264px; height: 264px; float: left; } 
                 #hello { margin: 15px auto; padding-left: 10px; display: inline; float: left; } 
                 #bye { padding-top: 10px; display: block; clear: left;} 
         </style>
@@ -12,6 +12,8 @@
         <script src="js/three.min.js"></script>
 
         <script id="vertexShader" type="x-shader/x-vertex">
+            precision highp float;
+
             varying vec2 vUv;
             attribute float displacement;
             varying vec3 vNormal;
@@ -44,8 +46,73 @@
 
             }
         </script>
+<script id="julia-fs" type="x-shader/x-fragment">
+            precision highp float;
+
+            uniform float time;
+            uniform vec2 resolution;
+            varying vec2 vUv;
+            varying vec3 vNormal;
+            uniform float amp;
+
+
+            void main(void) {
+                vec2 position = vUv;
+				float x = (position.x - 0.5) * 2.0;
+                float y = (position.y - 0.5) * 2.0;
+                //float x = position.x * 3.5 - 2.5;
+                //float y = position.y * 2.0 - 1.0;
+                //float cx = position.x;
+                //float cy = position.y;
+
+                float hue;
+                float saturation;
+                float value;
+                float hueRound;
+                int hueIndex;
+                float f;
+                float p;
+                float q;
+                float t;
+				//-0.835 -0.2321
+				//-0.8 0.156
+				// -0.4 0.6
+				// 0.285 0.01
+				// 0.29357170269 -0.4885853614
+                float cx = -0.835;
+                float cy =  -0.2321;
+                float tempX = 0.0;
+                int i = 0;
+                int runaway = 0;
+				float z = 0.0;
+				float zf = 0.0;
+                for (int i=0; i < 256; i++) {
+                    tempX = x * x - y * y + float(cx);
+                    y = 2.0 * x * y + float(cy);
+                    x = tempX;
+					z = x*x + y*y;
+                    if (runaway == 0 && z > 4.0) {
+                        runaway = i;
+						zf = sqrt(z);
+                        //break;
+                    }
+                }
+				float br = 0.0;
+                if (runaway != 0) {
+                    //NIC COLOURING
+                    //float z = sqrt(xf*xf + yf*yf);
+                    br = log2(1.75 + float(runaway) - log2(log2(zf))) / log2(256.0);
+                    
+                } else {
+                    //gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+					br = log2(1.75 + float(256) - log2(log2(z))) / log2(256.0);
+
+				}
+			 gl_FragColor = vec4(br - amp, br, 1.0, 1.0);
+            }
+        </script>
         <script id="mandshader-fs" type="x-shader/x-fragment">
-            precision mediump float;
+            precision highp float;
 
             uniform float time;
             uniform vec2 resolution;
@@ -59,9 +126,6 @@
                 float cx = position.x * 3.5 - 2.5;
                 float cy = position.y * 2.0 - 1.0;
 
-                //float cx = position.x;
-                //float cy = position.y;
-
                 float hue;
                 float saturation;
                 float value;
@@ -71,32 +135,38 @@
                 float p;
                 float q;
                 float t;
-
-
+	
                 float x = 0.0;
                 float y = 0.0;
                 float tempX = 0.0;
                 int i = 0;
                 int runaway = 0;
-                for (int i=0; i < 100; i++) {
+				float z = 0.0;
+				float zf = 0.0;
+                for (int i=0; i < 128; i++) {
                     tempX = x * x - y * y + float(cx);
                     y = 2.0 * x * y + float(cy);
                     x = tempX;
-                    if (runaway == 0 && x * x + y * y > 100.0) {
+					z = x*x + y*y;
+                    if (runaway == 0 && z > 4.0) {
                         runaway = i;
-                        break;
+						zf = sqrt(z);
+                        //break;
                     }
                 }
-
+				float br = 0.0;
                 if (runaway != 0) {
                     //NIC COLOURING
-                    float z = sqrt(x*x + y*y);
-                    float br = log2(1.75 + float(runaway) - log2(log2(z))) / log2(100.0);
-                    //float br = float(runaway) / 100.0;
-                    gl_FragColor = vec4(br - amp, amp - br, 1.0, 1.0);
+                    //float z = sqrt(xf*xf + yf*yf);
+                    br = log2(1.75 + float(runaway) - log2(log2(zf))) / log2(128.0);
+					gl_FragColor = vec4(br - amp, amp -br, 1.0, 1.0);
+
+                    
                 } else {
-                    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
-             }
+                    //gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+					gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+
+				}
             }
         </script>
         <script>
@@ -120,7 +190,9 @@
             group = new THREE.Object3D();
             group.position.x = 0.0;
             group.position.y = 0.0;
-            group.position.z = 0.0
+            group.position.z = 0.0;
+			group.rotation.x = Math.PI;
+
 
             // camera
             var camera = new THREE.PerspectiveCamera( 30, div.offsetWidth / div.offsetHeight, 1, 10000 );
@@ -156,12 +228,13 @@
 
             // geos
             var plane = new THREE.Mesh(
-                        new THREE.PlaneGeometry(4, 4, 20, 20), 
+                        new THREE.PlaneGeometry(3, 3, 20, 20), 
                         new THREE.MeshBasicMaterial({ color: 0x7f7f7f, wireframe: true })
             );
             plane.rotation.x = Math.PI;
+			plane.position.set(0,0,-1.5);
 
-            var geometry = new THREE.SphereGeometry(2,25,25);
+            var geometry = new THREE.SphereGeometry(2.5,25,25);
             //var material = new THREE.MeshBasicMaterial( {color: 0x0000ff} );
 
             // post proc
@@ -179,7 +252,7 @@
                 uniforms: uniforms,
                 attributes: attributes,
                 vertexShader: document.getElementById( 'vertexShader' ).textContent,
-                fragmentShader: document.getElementById( 'mandshader-fs' ).textContent
+                fragmentShader: document.getElementById( 'julia-fs' ).textContent
             });
 
             var sphere = new THREE.Mesh(geometry, material);
@@ -231,8 +304,8 @@
         	    document.addEventListener( 'mouseup', onDocumentMouseUp, false );
         	    document.addEventListener( 'mouseout', onDocumentMouseOut, false );
         
-        	    mouseXOnMouseDown = event.clientX - div.offsetWidth/2;
-	            mouseYOnMouseDown = event.clientY - div.offsetHeight/2;
+        	    mouseXOnMouseDown = event.clientX - window.innerWidth/2;
+	            mouseYOnMouseDown = event.clientY - window.innerHeight/2;
 
         	    targetRotationOnMouseDownX = targetRotationX;
         	    targetRotationOnMouseDownY = targetRotationY;
@@ -240,8 +313,8 @@
 
 	        function onDocumentMouseMove( event ) {
 
-	        	mouseX = event.clientX - div.offsetWidth/2;
-	        	mouseY = event.clientY - div.offsetHeight/2;
+	        	mouseX = event.clientX - window.innerWidth/2;
+	        	mouseY = event.clientY - window.innerHeight/2;
 
 	        	targetRotationX = targetRotationOnMouseDownX + ( mouseX - mouseXOnMouseDown ) * 0.20;
 	        	targetRotationY = targetRotationOnMouseDownY + ( mouseY - mouseYOnMouseDown ) * 0.20;

@@ -66,8 +66,10 @@
                 //float cy =  0.6;
 				//float cx = 0.285;
                 //float cy =  0.01;
-				float cx = 0.29357170269;
-                float cy = -0.4885853614;
+				float cx = 0.74543;
+				float cy = 0.11301;
+				//float cx = 0.29357170269;
+                //float cy = -0.4885853614;
 				
                 float tempX = 0.0;
                 int i = 0;
@@ -124,8 +126,8 @@
 			}
             void main(void) {
                 vec2 position = vUv;
-				float x = (position.x - 0.5) * 3.0;
-                float y = (position.y - 0.5) * 3.0;
+				float x = (position.x - 0.5) * 2.0 + 1.0;
+                float y = (position.y - 0.5) * 2.0 - 1.0;
                 //float x = position.x * 3.5 - 2.5;
                 //float y = position.y * 2.0 - 1.0;
                 //float cx = position.x;
@@ -142,8 +144,11 @@
                 float t;
 				
 				int itter = 256;
-				float cx = 1.0;
-                float cy =  0.1;
+				//float cx = 1.0;
+                
+				float cx = 1.2;
+                float cy =  0.5;
+				//float cy =  0.4;
 				
                 float tempX = 0.0;
 				float ctempX = 0.0;
@@ -178,9 +183,10 @@
                 } else {
                     //gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
 					br = log2(1.75 + float(itter) - log2(log2(z))) / log2(float(itter));
+					br = 1.0;
 
 				}
-			 gl_FragColor = vec4(br, br, 1.0, 1.0);
+			 gl_FragColor = vec4(br - amp, amp - br, 1.0, 1.0);
             }
         </script>
         <script id="fragmentShader" type="x-shader/x-fragment">

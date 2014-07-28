@@ -11,17 +11,26 @@
 				#data { margin: 0px 10px; display: inline; float: left;} 
                 #icon { width: 128px; height: 128px; padding-left: 30px;} 
                 #title {} 
-				#leftbar { float: right; padding: 0px 10px 0px 10px;} 
+				#leftbar { float: right; margin: 0px 10px 0px 10px;} 
 				#section80 { float: right;  display: block; margin: -5px 0px -10px 0px;} 
-				#section { text-align: right; margin-bottom: -10px ; padding: 00px;} 
+				#section { text-align: right; margin-bottom: -10px ; padding: 0px;} 
                 #content {  } 
+				#larrow { display: inline; text-align: right; font-size: 14px; margin: 0px 0px 0px 0px;
+						  cursor: pointer; cursor: hand;}
+				#rarrow { display: inline; text-align: right; font-size: 14px; float: right; 
+						  cursor: pointer; cursor: hand; margin: 0px 0px 0px 0px; }
 				#blurb { text-align: right; padding-left: 32px;}
 				#rainbow { colour: #000000 }
 				#location { margin: 0px 0px; }
+				#block {width: 600px; height: 600px; background: #FFFFFF;}
+				#currate { text-align: right; display: inline-block; font-size: 8px; margin: 0px 8px 0px 0px; 
+						   padding: 0px 5px 0px 0px; float:right; width: 108px; cursor: default;}
+				#ratepicker { margin: 0px 10px 0px 10px; -moz-user-select: none; -webkit-user-select: none; 
+							  -ms-user-select:none; user-select:none;}
 				ul li{ text-align: right; list-style-type: none; margin: 0; padding: 0; }
-
 				a { text-decoration: none;}
-				a:hover { text-decoration: none; outline:rgba(0,0,0,0.025) solid 2px;
+				a:hover { text-decoration: none; outline:rgba(0,0,0,0.025) solid 2px; }
+				input { float: right; background-color: #eeeeee; color: #444; padding: 5px; border: none; margin: 3px; }
 
         </style>
     </head>
@@ -30,6 +39,11 @@
 		<div id="side">
 			<div id="icon">
 			<!-- ICON JS GEN-->
+			</div>
+			<div id="ratepicker"  unselectable='on' onselectstart='return false;'>
+			<div id="larrow" onclick="boostRate(-1);"> &laquo </div>
+			<div id="rarrow" onclick="boostRate(1);"> &raquo </div>
+			<div id = "currate"></div>
 			</div>
 			<div id="leftbar">
 				<p id = "blurb"> 
@@ -43,6 +57,7 @@
 					
 					Name is DIZZLE MOFO.
 				</p>
+				<input type="text" value="Search" id="q" name="q" size="10" onfocus="q.value='';" onblur="q.value='Search';" style="text-align:right;">
 				<div id="section80">
 					<h4 id="section" class="rainbow"> on the ground </h4>
 					<ul>
@@ -78,6 +93,8 @@
 			<div id="content">
 				<h4 class="rainbow"> If i can get my css right, this will be to the right! </h4>
 				<p> this  p tag is just a bunch of jabrooni </p>
+			</div>
+			<div id = "block">
 			</div>
 		</div>
 		
@@ -332,7 +349,7 @@
 					br = 1.0;
 
 				}
-			 gl_FragColor = vec4(br - amp, amp*amp - br, amp*amp, 1.0);
+			 gl_FragColor = vec4(abs(br - amp), abs(amp*amp - br*0.75), amp*amp, 1.0);
             }
         </script>
         <script id="main">
@@ -352,6 +369,8 @@
             var mouseYOnMouseDown = 0;
 			
 			var hoverState = 0;
+			var scale = 0.25;
+			var rate = 0.25;
 
 
             // group
@@ -447,8 +466,8 @@
 
 			function domUpdater(amp, cls, bkg) {
 				var  fontElems = document.querySelectorAll(cls);
-				var red = Math.floor((1.0 - amp)*255)
-				var green = Math.floor((amp*amp - 1.0)*255);
+				var red = Math.floor((Math.abs(1.0 - amp)*255))
+				var green = Math.floor(Math.abs(amp*amp - 0.75)*255);
 				var blue = Math.floor((amp*amp)*255)
 				var alpha = 0.1;
 				for (var i = 0; i < fontElems.length; i++) {
@@ -463,7 +482,7 @@
 				}
 			}
 			
-		function domCleaner(cls) {
+			function domCleaner(cls) {
 				if (hoverState == 0) {
 					return;
 				}
@@ -476,12 +495,22 @@
 				hoverState = 0;
 			}
 			
+			function domFiller(amp, cls) {
+				var  fontElems = document.querySelectorAll(cls);
+				for (var i = 0; i < fontElems.length; i++) {
+					fontElems[i].innerText = "" + amp; 
+				}
+			}
+			
+			function boostRate(dir) {
+				rate = rate + dir*rate*scale;
+			}
             function render() {
                 requestAnimationFrame(render);
 
                 var delta = clock.getDelta();
-                uniforms.time.value += delta;     
-                uniforms.amp.value = Math.sin(uniforms.time.value) * 1;     
+                uniforms.time.value += delta*rate;     
+                uniforms.amp.value = Math.sin(uniforms.time.value);     
 
                 sphere.rotation.x += 0.01;
                 sphere.rotation.y += 0.02;
@@ -495,6 +524,12 @@
 				domCleaner("a");
 				domUpdater(uniforms.amp.value, ".rainbow", false);
 				domUpdater(uniforms.amp.value, "a:hover", true);
+				domUpdater(uniforms.amp.value, "#block", true);
+				domUpdater(uniforms.amp.value, "#currate", true);
+				domUpdater(uniforms.amp.value, "#larrow", false);
+				domUpdater(uniforms.amp.value, "#rarrow", false);
+				domFiller(uniforms.amp.value, "#currate");
+
                 
 				renderer.render(scene, camera);
             }

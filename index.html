@@ -1,13 +1,119 @@
 <html>
     <head>
-        <title> Threejs bs </title>
-        <style> canvas { width: 100%; height: 100% } </style>
+        <title> WebGL on a 90's page </title>
+        <style> canvas { width: 100%; height: 100% } 
+                html { width: 100%; height: 100% } 
+				body { background-image:url('textures/white-lines.gif'); background-color: #FFFFFF;
+					   margin: 20px 10px 10px; font: 11px/19px Verdana, Arial, Helvetica, sans-serif; 
+					   color: #000000; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 
+					   100%; width: 100%; height:100%;}
+					   
+				#side { width: 168px; margin: 0px auto; padding: 0px 10px 0px 10px; display: inline; float: left; } 
+				#data { margin: 0px 10px; display: inline; width: 80%;} 
+                #icon { width: 128px; height: 128px; padding-left: 30px;} 
+                #title {} 
+				#leftbar { float: right; margin: 0px 10px 0px 10px;} 
+				#section80 { float: right;  display: block; margin: -5px 0px -10px 0px;} 
+				#section { text-align: right; margin-bottom: -10px ; padding: 0px;} 
+                #content {  } 
+				#larrow { display: inline; text-align: right; font-size: 14px; margin: 0px 0px 0px 0px;
+						  cursor: pointer; cursor: hand;}
+				#rarrow { display: inline; text-align: right; font-size: 14px; float: right; 
+						  cursor: pointer; cursor: hand; margin: 0px 0px 0px 0px; }
+				#blurb { text-align: right; padding-left: 32px;}
+				#rainbow { colour: #000000 }
+				#location { margin: 0px 0px; }
+				#block {margin-left: 188px; height: 454px; background: #FFFFFF;}
+                #block-text{margin: 40px 20px; color: #000000; text-align: left; margin-right:10px;}
+                #block-text a{display:block;}
+                #stuff {width: 100%; margin: 0px auto; padding-top: 0px;}
+				#currate { text-align: right; display: inline-block; font-size: 8px; margin: 0px 8px 0px 0px; 
+						   padding: 0px 5px 0px 0px; float:right; width: 108px; cursor: default;}
+				#ratepicker { margin: 0px 10px 0px 10px; -moz-user-select: none; -webkit-user-select: none; 
+							  -ms-user-select:none; user-select:none;}
+				ul li{ text-align: right; list-style-type: none; margin: 0; padding: 0; }
+				a { text-decoration: none;}
+				a:hover { text-decoration: none; outline:rgba(0,0,0,0.025) solid 2px; }
+				input { float: right; background-color: #eeeeee; color: #444; padding: 5px; border: none; margin: 3px; }
+
+        </style>
     </head>
     <body>
-        <script src="js/three.min.js"></script>
+	  
+		<div id="side">
+			<div id="icon">
+			<!-- ICON JS GEN-->
+			</div>
+			<div id="ratepicker"  unselectable='on' onselectstart='return false;'>
+			<div id="larrow" onclick="boostRate(-1);"> &laquo </div>
+			<div id="rarrow" onclick="boostRate(1);"> &raquo </div>
+			<div id = "currate"></div>
+			</div>
+			<div id="leftbar">
+				<p id = "blurb"> 
+                    Hi. Name's Abdi Dahir and this is a place for me to mark
+                    the web in w/e strange way I feel.
+                </p>
+				<p id = "blurb"> 
+                Fun fact: that ball up there is a fractal and its generated
+                by a shader. Thats pretty interesting right? Interesting and 
+                incredibly unoptimized, sorry but I just dont care to change that.
+				</p>
+				<div id="section80">
+					<h4 id="section" class="rainbow"> on the ground </h4>
+					<ul>
+						<li>
+                        <del><p id= "location"> uoft: bahen center </p></del>
+						</li>
+						<li>
+							<p id="location"> columbia: SEL lab </p>
+						</li>
+						<li>
+							<p id="location"> brooklyn: ??? </p>
+						</li>
 
+					</ul>
+				</div>
+				<div id="section80">
+					<h4 id="section" class="rainbow"> on the web </h4>
+					<ul>
+						<li>
+							<a href = "https://github.com/snkz"> github.com/snkz </a>
+						</li>
+						<li>
+							<a href = "https://twitter.com/snkz"> twitter.com/snkz </a>
+						</li>
+						<li>
+							<a href="mailto:abdi.dahir@outlook"> abdi.dahir@outlook.com </a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div id="data">
+			<div id="title">
+				<h2 class="rainbow"> A webpage lost in time</h2>
+			</div>
+			<div id="content">
+				<p class="rainbow"> My sense of design is mine, therefore its good.  </p>
+			</div>
+			<div id = "stuff">
+                <div id="block">
+                    <div id="block-text">
+                      <p> Let me begin with some content I've been interested in so far: <p>
+                      <a href="">RPI as radio tuner.</a>
+                      <a href="">Nintendo X Playboy??</a>
+                      <a href="">This pendant.</a>
+
+                    </div>
+                </div>
+			</div>
+		</div>
+		
+		<!-- j whattt? -->
+		<script src="js/three.min.js"></script>
         <script id="vertexShader" type="x-shader/x-vertex">
-		    precision highp float;
+            precision highp float;
 
             varying vec2 vUv;
             attribute float displacement;
@@ -17,11 +123,29 @@
             void main() {
                 vNormal = normal;
                 vUv = uv;
-                vec3 newPos = position;
-//				+ normal * vec3(displacement * amp);
+                vec3 newPos = position; // + normal * vec3(displacement * amp);
                 gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0 );
             }
 
+        </script>
+        <script id="fragmentShader" type="x-shader/x-fragment">
+            uniform float time;
+            uniform vec2 resolution;
+            varying vec2 vUv;
+            varying vec3 vNormal;
+
+            void main( void ) {
+
+            vec2 position = vUv;
+            float color = 0.0;
+            color += sin( position.x * cos( time / 15.0 ) * 80.0 ) + cos( position.y * cos( time / 15.0 ) * 10.0 );
+            color += sin( position.y * sin( time / 10.0 ) * 40.0 ) + cos( position.x * sin( time / 25.0 ) * 40.0 );
+            color += sin( position.x * sin( time / 5.0 ) * 10.0 ) + sin( position.y * sin( time / 35.0 ) * 80.0 );
+            color *= sin( time / 10.0 ) * 0.5;
+            gl_FragColor = vec4( vec3( color, color * 0.5, sin( color + time / 3.0 ) * 0.75 ), 1.0 );
+            //gl_FragColor = vec4( position.x, 0.0, 0.0, 1.0 );
+
+            }
         </script>
 		<script id="julia-fs" type="x-shader/x-fragment">
             precision highp float;
@@ -66,17 +190,16 @@
                 //float cy =  0.6;
 				//float cx = 0.285;
                 //float cy =  0.01;
-				float cx = 0.74543;
-				float cy = 0.11301;
-				//float cx = 0.29357170269;
-                //float cy = -0.4885853614;
+				//float cx = 0.74543;
+				//float cy = 0.11301;
+				float cx = 0.29357170269;
+                float cy = -0.4885853614;
 				
                 float tempX = 0.0;
                 int i = 0;
                 int runaway = 0;
 				float z = 0.0;
 				float zf = 0.0;
-				
                 for (int i=0; i < 256; i++) {
                     tempX = x * x - y * y + float(cx);
                     y = 2.0 * x * y + float(cy);
@@ -97,9 +220,68 @@
                 } else {
                     //gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
 					br = log2(1.75 + float(256) - log2(log2(z))) / log2(256.0);
+					br = 1.0;
 
 				}
-			 gl_FragColor = vec4(br, br, 1.0, 1.0);
+			 gl_FragColor = vec4(br - amp, br, 1.0, 1.0);
+            }
+        </script>
+        <script id="mandshader-fs" type="x-shader/x-fragment">
+            precision highp float;
+
+            uniform float time;
+            uniform vec2 resolution;
+            varying vec2 vUv;
+            varying vec3 vNormal;
+            uniform float amp;
+
+
+            void main(void) {
+                vec2 position = vUv;
+                float cx = position.x * 3.5 - 2.5;
+                float cy = position.y * 2.0 - 1.0;
+
+                float hue;
+                float saturation;
+                float value;
+                float hueRound;
+                int hueIndex;
+                float f;
+                float p;
+                float q;
+                float t;
+	
+                float x = 0.0;
+                float y = 0.0;
+                float tempX = 0.0;
+                int i = 0;
+                int runaway = 0;
+				float z = 0.0;
+				float zf = 0.0;
+                for (int i=0; i < 128; i++) {
+                    tempX = x * x - y * y + float(cx);
+                    y = 2.0 * x * y + float(cy);
+                    x = tempX;
+					z = x*x + y*y;
+                    if (runaway == 0 && z > 4.0) {
+                        runaway = i;
+						zf = sqrt(z);
+                        //break;
+                    }
+                }
+				float br = 0.0;
+                if (runaway != 0) {
+                    //NIC COLOURING
+                    //float z = sqrt(xf*xf + yf*yf);
+                    br = log2(1.75 + float(runaway) - log2(log2(zf))) / log2(128.0);
+					gl_FragColor = vec4(br - amp, amp -br, 1.0, 1.0);
+
+                    
+                } else {
+                    //gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+					gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+
+				}
             }
         </script>
 		<script id="juliaSINE-fs" type="x-shader/x-fragment">
@@ -126,13 +308,9 @@
 			}
             void main(void) {
                 vec2 position = vUv;
-				float x = (position.x - 0.5) * 2.0 + 1.0;
-                float y = (position.y - 0.5) * 2.0 - 1.0;
-                //float x = position.x * 3.5 - 2.5;
-                //float y = position.y * 2.0 - 1.0;
-                //float cx = position.x;
-                //float cy = position.y;
-
+				float x = (position.x - 0.5) * 9.42;
+                float y = (position.y - 0.5) * 9.42;
+               
                 float hue;
                 float saturation;
                 float value;
@@ -144,11 +322,8 @@
                 float t;
 				
 				int itter = 256;
-				//float cx = 1.0;
-                
-				float cx = 1.2;
-                float cy =  0.5;
-				//float cy =  0.4;
+				float cx = 1.0;
+                float cy =  1.9;
 				
                 float tempX = 0.0;
 				float ctempX = 0.0;
@@ -186,91 +361,40 @@
 					br = 1.0;
 
 				}
-			 gl_FragColor = vec4(br - amp, amp - br, 1.0, 1.0);
+			 gl_FragColor = vec4(abs(br - amp), abs(amp*amp - br*0.75), amp*amp, 1.0);
             }
         </script>
-        <script id="fragmentShader" type="x-shader/x-fragment">
-            uniform float time;
-            uniform vec2 resolution;
-            varying vec2 vUVv
-            varying vec3 vNormal;
-
-            void main( void ) {
-
-            vec2 position = vUv;
-            float color = 0.0;
-            color += sin( position.x * cos( time / 15.0 ) * 80.0 ) + cos( position.y * cos( time / 15.0 ) * 10.0 );
-            color += sin( position.y * sin( time / 10.0 ) * 40.0 ) + cos( position.x * sin( time / 25.0 ) * 40.0 );
-            color += sin( position.x * sin( time / 5.0 ) * 10.0 ) + sin( position.y * sin( time / 35.0 ) * 80.0 );
-            color *= sin( time / 10.0 ) * 0.5;
-            gl_FragColor = vec4( vec3( color, color * 0.5, sin( color + time / 3.0 ) * 0.75 ), 1.0 );
-            //gl_FragColor = vec4( position.x, 0.0, 0.0, 1.0 );
-
-            }
-        </script>
-        <script id="mand-fs" type="x-shader/x-fragment">
-            precision mediump float;
-
-            uniform float time;
-            uniform vec2 resolution;
-            varying vec2 vUv;
-            varying vec3 vNormal;
-
-
-            void main(void) {
-                vec2 position = vUv;
-                float cx = (position.x - 0.5) * 1.5;
-                float cy = (position.y - 0.5) * 1.5;
-
-                //float cx = position.x;
-                //float cy = position.y;
-
-                float hue;
-                float saturation;
-                float value;
-                float hueRound;
-                int hueIndex;
-                float f;
-                float p;
-                float q;
-                float t;
-
-
-                float x = 0.0;
-                float y = 0.0;
-				float xf = 0.0;
-                float yf = 0.0;
-                float tempX = 0.0;
-                int i = 0;
-                int runaway = 0;
-                for (int i=0; i < 100; i++) {
-                    tempX = x * x - y * y + float(cx);
-                    y = 2.0 * x * y + float(cy);
-                    x = tempX;
-                    if (runaway == 0 && x * x + y * y > 4.0) {
-                        runaway = i;
-						xf = x;
-						yf = y;
-                        //break;
-                    }
-                }
-                if (runaway != 0) {
-                    float z = sqrt(xf*xf + yf*yf);
-                    float br = log2(1.75 + float(runaway) - log2(log2(z))) / log2(100.0);
-                    gl_FragColor = vec4(float(runaway)/100.0, float(runaway)/100.0, 1.0, 1.0);
-                } else {
-                    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
-             }
-            }
-        </script>
-        <script>
+        <script id="main">
+            var mahname = "icon";
+            var div = document.getElementById(mahname); 
             // our bs goes here
             var scene = new THREE.Scene();
-            scene.fog = new THREE.Fog( 0xcce0ff, 500, 10000 );
             var clock = new THREE.Clock();
+            var targetRotationX = 0;
+            var targetRotationOnMouseDownX = 0;
+            var targetRotationY = 0;
+            var targetRotationOnMouseDownY = 0;
+            var mouseX = 0;
+            var mouseX = 0;
+            var mouseXOnMouseDown = 0;
+            var mouseY = 0;
+            var mouseYOnMouseDown = 0;
+			
+			var hoverState = 0;
+			var scale = 0.25;
+			var rate = 0.25;
+
+
+            // group
+            group = new THREE.Object3D();
+            group.position.x = 0.0;
+            group.position.y = 0.0;
+            group.position.z = 0.0;
+			group.rotation.x = Math.PI;
+
 
             // camera
-            var camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 10000 );
+            var camera = new THREE.PerspectiveCamera( 30, div.offsetWidth / div.offsetHeight, 1, 10000 );
             camera.position.y = 0;
             camera.position.z = 10;
             scene.add( camera );
@@ -295,31 +419,21 @@
             light.position.set( 0, -1, 0 );
             scene.add( light );
 
-            // ground
-            var initColor = new THREE.Color( 0x497f13 );
-            var initTexture = THREE.ImageUtils.generateDataTexture( 1, 1, initColor );
-            var groundMaterial = new THREE.MeshPhongMaterial( 
-            { color: 0xffffff, specular: 0x111111, map: initTexture } );
 
-            var groundTexture = THREE.ImageUtils.loadTexture( "textures/grasslight-big.jpg", 
-            undefined, function() { groundMaterial.map = groundTexture } );
+            var renderer = new THREE.WebGLRenderer( { alpha: true });
+            renderer.setSize(div.offsetWidth, div.offsetHeight);
+            renderer.setClearColor( 0x000000, 0 );
+            div.appendChild(renderer.domElement);
 
-            groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
-            groundTexture.repeat.set( 25, 25 );
-            groundTexture.anisotropy = 16;
+            // geos
+            var plane = new THREE.Mesh(
+                        new THREE.PlaneGeometry(4, 4, 20, 20), 
+                        new THREE.MeshBasicMaterial({ color: 0x7f7f7f, wireframe: true })
+            );
+            plane.rotation.x = Math.PI;
+			plane.position.set(0,0,-2);
 
-            var mesh = new THREE.Mesh( new THREE.PlaneGeometry( 20000, 20000 ), groundMaterial );
-            mesh.position.y = -250;
-            mesh.rotation.x = - Math.PI / 2;
-            mesh.receiveShadow = true;
-            scene.add( mesh );
-
-            var renderer = new THREE.WebGLRenderer();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setClearColor( scene.fog.color );
-            document.body.appendChild(renderer.domElement);
-
-            var geometry = new THREE.CubeGeometry(4,4,4);
+            var geometry = new THREE.SphereGeometry(2,25,25);
             //var material = new THREE.MeshBasicMaterial( {color: 0x0000ff} );
 
             // post proc
@@ -337,48 +451,149 @@
                 uniforms: uniforms,
                 attributes: attributes,
                 vertexShader: document.getElementById( 'vertexShader' ).textContent,
-                //fragmentShader: document.getElementById( 'fragmentShader' ).textContent
-				fragmentShader: document.getElementById( 'juliaSINE-fs' ).textContent
+                fragmentShader: document.getElementById( 'juliaSINE-fs' ).textContent
             });
 
-            var cube = new THREE.Mesh(geometry, material);
-            var verts = cube.geometry.vertices;
+            var sphere = new THREE.Mesh(geometry, material);
+            //var sphere = new THREE.Mesh(geometry, new THREE.MeshNormalMaterial());
+            var verts = sphere.geometry.vertices;
             var values = attributes.displacement.value;
 
             for (var v = 0; v < verts.length; v++) {
-                values.push(Math.random() * 0.15);
+                values.push(Math.random() * 0.50);
             }
 
-            scene.add(cube);
+            group.add(sphere);
+            //group.add(plane);
+			//scene.add(plane);
+            scene.add(group);
 
             function onWindowResize( event ) {
-                uniforms.resolution.value.x = window.innerWidth;
-                uniforms.resolution.value.y = window.innerHeight;
-                camera.aspect = window.innerWidth / window.innerHeight;
+                uniforms.resolution.value.x = div.offsetWidth;
+                uniforms.resolution.value.y = div.offsetHeight;
+                camera.aspect = div.offsetWidth / div.offsetHeight;
                 camera.updateProjectionMatrix();
-                renderer.setSize( window.innerWidth, window.innerHeight );
+                renderer.setSize( div.offsetWidth, div.offsetHeight );
             }
 
+			function domUpdater(amp, cls, bkg) {
+				var  fontElems = document.querySelectorAll(cls);
+				var red = Math.floor((Math.abs(1.0 - amp)*255))
+				var green = Math.floor(Math.abs(amp*amp - 0.75)*255);
+				var blue = Math.floor((amp*amp)*255)
+				var alpha = 0.1;
+				for (var i = 0; i < fontElems.length; i++) {
+					fontElems[i].style.color = "rgb(" + red + "," + green + "," + blue + ")";
+					if (bkg === true) {
+						fontElems[i].style.background = "rgba(" + red + "," 
+																+ green + "," 
+																+ blue + "," 
+																+ alpha + ")";
+						hoverState = 1;
+					}
+				}
+			}
+			
+			function domCleaner(cls) {
+				if (hoverState == 0) {
+					return;
+				}
+				var  fontElems = document.querySelectorAll(cls);
+				for (var i = 0; i < fontElems.length; i++) {
+					fontElems[i].style.background = "";
+					fontElems[i].style.color = "";
+				}
+				
+				hoverState = 0;
+			}
+			
+			function domFiller(amp, cls) {
+				var  fontElems = document.querySelectorAll(cls);
+				for (var i = 0; i < fontElems.length; i++) {
+					fontElems[i].innerHTML = "" + amp; 
+				}
+			}
+			
+			function boostRate(dir) {
+				rate = rate + dir*rate*scale;
+			}
             function render() {
                 requestAnimationFrame(render);
 
                 var delta = clock.getDelta();
-                uniforms.time.value += delta * 5;     
+                uniforms.time.value += delta*rate;     
                 uniforms.amp.value = Math.sin(uniforms.time.value);     
 
-                cube.rotation.x += 0.0;
-                cube.rotation.y += 0.0;
+                sphere.rotation.x += 0.01;
+                sphere.rotation.y += 0.02;
+                sphere.rotation.z += 0.03;
 
-                renderer.render(scene, camera);
+                group.rotation.y += ( targetRotationX - group.rotation.y ) * 0.05;
+                group.rotation.x += ( targetRotationY - group.rotation.x ) * 0.05;
+
+
+				// random dom changing
+				domCleaner("a");
+				domUpdater(uniforms.amp.value, ".rainbow", false);
+				domUpdater(uniforms.amp.value, "a:hover", true);
+				domUpdater(uniforms.amp.value, "#block", true);
+				domUpdater(uniforms.amp.value, "#currate", true);
+				domUpdater(uniforms.amp.value, "#larrow", false);
+				domUpdater(uniforms.amp.value, "#rarrow", false);
+				domFiller(uniforms.amp.value, "#currate");
+
+                
+				renderer.render(scene, camera);
             }
 
+
+	        // click events
+	        function onDocumentMouseDown( event ) {
+
+        	    //event.preventDefault();
+        
+        	    document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+        	    document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+        	    document.addEventListener( 'mouseout', onDocumentMouseOut, false );
+        
+        	    mouseXOnMouseDown = event.clientX - window.innerWidth/2;
+	            mouseYOnMouseDown = event.clientY - window.innerHeight/2;
+
+        	    targetRotationOnMouseDownX = targetRotationX;
+        	    targetRotationOnMouseDownY = targetRotationY;
+            };
+
+	        function onDocumentMouseMove( event ) {
+
+	        	mouseX = event.clientX - window.innerWidth/2;
+	        	mouseY = event.clientY - window.innerHeight/2;
+
+	        	targetRotationX = targetRotationOnMouseDownX + ( mouseX - mouseXOnMouseDown ) * 0.20;
+	        	targetRotationY = targetRotationOnMouseDownY + ( mouseY - mouseYOnMouseDown ) * 0.20;
+	        };
+
+            // add remove event listeners on the fly
+            function onDocumentMouseUp( event ) {
+
+	        	document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+	        	document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+	        	document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+	        };
+
+	        function onDocumentMouseOut( event ) {
+
+	        	document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+	        	document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+	        	document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+	        };
+
+
             onWindowResize();
+            document.addEventListener( 'mousedown', onDocumentMouseDown, false );
             window.addEventListener( 'resize', onWindowResize, false );
             render();
-
-
-
         </script>
+
     </body>
 </html>
 

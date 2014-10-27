@@ -1,0 +1,17 @@
+{
+  "author": "Abdi Dahir <abdi.dahir@outlook.com> (abdi.dahir.ca)",
+  "name": "threejs-playground",
+  "description": "website with threejs stuff",
+  "version": "0.0.0",
+  "homepage": "abdi.dahir.ca",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/snkz/threejs-playground.git"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}

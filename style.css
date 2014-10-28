@@ -1,0 +1,36 @@
+canvas { width: 100%; height: 100% } 
+html { width: 100%; height: 100% } 
+body { background-image:url('textures/white-lines.gif'); background-color: #FFFFFF;
+	   margin: 20px 10px 10px; font: 11px/19px Verdana, Arial, Helvetica, sans-serif; 
+	   color: #000000; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 
+	   100%; width: 100%; height:100%;}
+	   
+#side { width: 168px; margin: 0px auto; padding: 0px 10px 0px 10px; display: inline-block; float: left; } 
+#data { margin: 0px 10px; display: inline; width: 80%;} 
+#icon { width: 128px; height: 128px; padding-left: 30px;} 
+#title {} 
+#leftbar { float: right; margin: 0px 10px 0px 10px;} 
+#section80 { float: right;  display: block; margin: -5px 0px -10px 0px;} 
+#section { text-align: right; margin-bottom: -10px ; padding: 0px;} 
+#content {  } 
+#larrow { display: inline; text-align: right; font-size: 14px; margin: 0px 0px 0px 0px;
+		  cursor: pointer; cursor: hand;}
+#rarrow { display: inline; text-align: right; font-size: 14px; float: right; 
+		  cursor: pointer; cursor: hand; margin: 0px 0px 0px 0px; }
+#blurb { text-align: right; padding-left: 32px;}
+#rainbow { colour: #000000 }
+#location { margin: 0px 0px; }
+#block {margin-left: 188px; height: 454px; background: #FFFFFF;}
+#block-text{margin: 40px 20px; color: #000000; text-align: left; margin-right:10px;}
+#block-text a{display:block;}
+#stuff {width: 100%; margin: 0px auto; padding-top: 0px;}
+#currate { text-align: right; display: inline-block; font-size: 8px; margin: 0px 8px 0px 0px; 
+		   padding: 0px 5px 0px 0px; float:right; width: 108px; cursor: default;}
+#ratepicker { margin: 0px 10px 0px 10px; -moz-user-select: none; -webkit-user-select: none; 
+			  -ms-user-select:none; user-select:none;}
+ul li{ text-align: right; list-style-type: none; margin: 0; padding: 0; }
+a { text-decoration: none;}
+a:hover { text-decoration: none; outline:rgba(0,0,0,0.025) solid 2px; }
+input { float: right; background-color: #eeeeee; color: #444; padding: 5px; border: none; margin: 3px; }
+
+

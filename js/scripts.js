@@ -233,7 +233,8 @@
         function render() {
             // sleep when not viewed
             requestAnimationFrame(render);
-        
+            
+            var delta = clock.getDelta();
             uniforms.time.value += delta*rate;     
             uniforms.amp.value = Math.sin(uniforms.time.value);     
         

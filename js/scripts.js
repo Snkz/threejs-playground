@@ -1,3 +1,11 @@
+var rate = 0.25;
+var scale = 0.25;
+
+// after arrow gets clicked 
+function boostRate(dir) {
+    rate = rate + dir*rate*scale;
+}
+    
 (function() {
     var mahname = "icon";
     var div = document.getElementById(mahname); 
@@ -15,9 +23,6 @@
     var mouseYOnMouseDown = 0;
     
     var hoverState = 0;
-    var scale = 0.25;
-    var rate = 0.25;
-    
     
     // group (you hid a plane in the scene prob should remove it)
     group = new THREE.Object3D();
@@ -140,11 +145,6 @@
     	}
     }
     
-    // after arrow gets clicked 
-    function boostRate(dir) {
-    	rate = rate + dir*rate*scale;
-    }
-    
     function dom_events() {
     
         var delta = clock.getDelta();
@@ -161,6 +161,8 @@
     	domUpdater(amp, "#larrow", false);
     	domUpdater(amp, "#rarrow", false);
     	domFiller(amp, "#currate");
+
+        return delta;
     }
     
     // click events
@@ -234,7 +236,8 @@
             // sleep when not viewed
             requestAnimationFrame(render);
             
-            var delta = clock.getDelta();
+            // clock does weird shit when asked for delta twice
+            var delta = dom_events();
             uniforms.time.value += delta*rate;     
             uniforms.amp.value = Math.sin(uniforms.time.value);     
         
@@ -246,7 +249,6 @@
             group.rotation.x += ( targetRotationY - group.rotation.x ) * 0.05;
         
         
-            dom_events();
             renderer.render(scene, camera);
         }
 

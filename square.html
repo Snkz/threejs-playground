@@ -186,7 +186,7 @@
 					br = 1.0;
 
 				}
-			 gl_FragColor = vec4(br - amp, amp - br, 1.0, 1.0);
+			 gl_FragColor = vec4(abs(br - amp), abs(amp*amp - br*0.75), amp*amp, 1.0);
             }
         </script>
         <script id="fragmentShader" type="x-shader/x-fragment">

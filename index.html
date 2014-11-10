@@ -74,23 +74,23 @@
 			</div>
 		</div>
 		
-		<!-- shadaah -->
-        <script id="vertexShader" type="x-shader/x-vertex">
-            precision highp float;
+	<!-- shadaah -->
+    <script id="vertexShader" type="x-shader/x-vertex">
+        precision highp float;
 
-            varying vec2 vUv;
-            attribute float displacement;
-            varying vec3 vNormal;
-            uniform float amp;
+        varying vec2 vUv;
+        attribute float displacement;
+        varying vec3 vNormal;
+        uniform float amp;
 
-            void main() {
-                vNormal = normal;
-                vUv = uv;
-                vec3 newPos = position; // + normal * vec3(displacement * amp);
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0 );
-            }
+        void main() {
+            vNormal = normal;
+            vUv = uv;
+            vec3 newPos = position; // + normal * vec3(displacement * amp);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0 );
+        }
 
-        </script>
+    </script>
 	<script id="juliaSINE-fs" type="x-shader/x-fragment">
 	precision highp float;
 
@@ -177,7 +177,7 @@
 
 	<!-- j whattt? -->
 	<script src="js/three.min.js"></script>
-        <script id="main" src="js/scripts.js"></script>
+    <script id="main" src="js/scripts.js"></script>
 
     </body>
 </html>

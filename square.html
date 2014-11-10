@@ -366,8 +366,8 @@
                 uniforms.time.value += delta * 5;     
                 uniforms.amp.value = Math.sin(uniforms.time.value);     
 
-                cube.rotation.x += 0.0;
-                cube.rotation.y += 0.0;
+                cube.rotation.x += 0.1;
+                cube.rotation.y += 0.01;
 
                 renderer.render(scene, camera);
             }

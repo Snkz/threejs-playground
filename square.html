@@ -363,7 +363,7 @@
                 requestAnimationFrame(render);
 
                 var delta = clock.getDelta();
-                uniforms.time.value += delta * 5;     
+                uniforms.time.value += delta * 2;     
                 uniforms.amp.value = Math.sin(uniforms.time.value);     
 
                 cube.rotation.x += 0.1;

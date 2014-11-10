@@ -91,89 +91,92 @@
             }
 
         </script>
-        <script id="juliaSINE-fs" type="x-shader/x-fragment">
-            precision highp float;
+	<script id="juliaSINE-fs" type="x-shader/x-fragment">
+	precision highp float;
 
-            uniform float time;
-            uniform vec2 resolution;
-            varying vec2 vUv;
-            varying vec3 vNormal;
-            uniform float amp;
+	uniform float time;
+	uniform vec2 resolution;
+	varying vec2 vUv;
+	varying vec3 vNormal;
+	uniform float amp;
 
-			float cosh(float val)
-			{
-				float tmp = exp(val);
-				float cosH = (tmp + 1.0 / tmp) / 2.0;
-				return cosH;
+	float cosh(float val)
+	{
+		float tmp = exp(val);
+		float cosH = (tmp + 1.0 / tmp) / 2.0;
+		return cosH;
+	}
+	
+	float sinh(float val)
+	{
+		float tmp = exp(val);
+		float sinH = (tmp - 1.0 / tmp) / 2.0;
+		return sinH;
+	}
+	void main(void) {
+		vec2 position = vUv;
+		float x = (position.x - 0.5) * 9.42;
+		float y = (position.y - 0.5) * 9.42;
+	
+		float hue;
+		float saturation;
+		float value;
+		float hueRound;
+		int hueIndex;
+		float f;
+		float p;
+		float q;
+		float t;
+	
+		int itter = 256;
+		//float cx = 1.0;
+		//float cy =  1.9;
+		float cx = 1.2;
+		float cy =  0.5;
+	
+		float tempX = 0.0;
+		float ctempX = 0.0;
+		int i = 0;
+		int runaway = 0;
+		float z = 0.0;
+		float zf = 0.0;
+	
+	
+		for (int i=0; i < 256; i++) {
+	
+			tempX = sin(x) * cosh(y);
+			y = cos(x) * sinh(y);
+			x = tempX;
+	
+			ctempX = x * float(cx) - y * float(cy);
+			y = x * float(cy) + y * float(cx);
+			x = ctempX;
+			z = x*x + y*y;
+			if (runaway == 0 && z > 2500.0) {
+				runaway = i;
+				zf = sqrt(z);
+				//break;
 			}
+		}
+		float br = 0.0;
+		if (runaway != 0) {
+			//NIC COLOURING
+			//float z = sqrt(xf*xf + yf*yf);
+			br = log2(1.75 + float(runaway) - log2(log2(zf))) / log2(float(itter));
+	
+		} else {
+			//gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+			br = log2(1.75 + float(itter) - log2(log2(z))) / log2(float(itter));
+			br = 1.0;
+	
+		}
+		gl_FragColor = vec4(abs(br - amp), abs(amp*amp - br*0.75), amp*amp, 1.0);
+	}
 
-			float sinh(float val)
-			{
-				float tmp = exp(val);
-				float sinH = (tmp - 1.0 / tmp) / 2.0;
-				return sinH;
-			}
-            void main(void) {
-                vec2 position = vUv;
-				float x = (position.x - 0.5) * 9.42;
-                float y = (position.y - 0.5) * 9.42;
-               
-                float hue;
-                float saturation;
-                float value;
-                float hueRound;
-                int hueIndex;
-                float f;
-                float p;
-                float q;
-                float t;
-				
-				int itter = 256;
-				float cx = 1.0;
-                float cy =  1.9;
-				
-                float tempX = 0.0;
-				float ctempX = 0.0;
-                int i = 0;
-                int runaway = 0;
-				float z = 0.0;
-				float zf = 0.0;
-				
-				
-                for (int i=0; i < 256; i++) {
-				
-                    tempX = sin(x) * cosh(y);
-                    y = cos(x) * sinh(y);
-                    x = tempX;
-					
-					ctempX = x * float(cx) - y * float(cy);
-					y = x * float(cy) + y * float(cx);
-					x = ctempX;
-					z = x*x + y*y;
-                    if (runaway == 0 && z > 2500.0) {
-                        runaway = i;
-						zf = sqrt(z);
-                        //break;
-                    }
-                }
-				float br = 0.0;
-                if (runaway != 0) {
-                    //NIC COLOURING
-                    //float z = sqrt(xf*xf + yf*yf);
-                    br = log2(1.75 + float(runaway) - log2(log2(zf))) / log2(float(itter));
-                    
-                } else {
-                    //gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
-					br = log2(1.75 + float(itter) - log2(log2(z))) / log2(float(itter));
-					br = 1.0;
+	</script>
 
-				}
-			 gl_FragColor = vec4(abs(br - amp), abs(amp*amp - br*0.75), amp*amp, 1.0);
-            }
-        </script>
-
-		<!-- j whattt? -->
-		<script src="js/three.min.js"></script>
+	<!-- j whattt? -->
+	<script src="js/three.min.js"></script>
         <script id="main" src="js/scripts.js"></script>
 
     </body>

@@ -34,5 +34,12 @@ ul li{ text-align: right; list-style-type: none; margin: 0; padding: 0; }
 a { text-decoration: none;}
 a:hover { text-decoration: none; outline:rgba(0,0,0,0.025) solid 2px; }
 input { float: right; background-color: #eeeeee; color: #444; padding: 5px; border: none; margin: 3px; }
-
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 

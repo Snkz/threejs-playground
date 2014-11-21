@@ -7,16 +7,17 @@ body { background-image:url('textures/white-lines.gif'); background-color: #FFFF
 	   color: #000000; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 
 	   100%; width: 100%; height:100%;}
 	   
-#wrapper { margin: 0px auto; width: 1200px; }
+#wrapper { margin: 0px; width: 1200px; }
 #header {} 
 #title { float: left; margin: 20px 40px;}
-#blurb { text-align: right; padding-left: 32px;}
+#blurb { text-align: right; margin: 10px 0px 0px 0px !important;}
+#blurb-small { font-size: 0.62em; text-align: right; margin: 10px 0px 0px 0px !important;}
 #icon { width: 128px; height: 128px; padding-left: 30px; float: left;} 
 #data { clear: left; margin: 0px 10px; overflow:hidden;} 
 #side { width: 168px; margin: 0px auto; float: left; margin-right: 20px; 
-        padding-bottom: 1000px; margin-bottom: -1000px;} 
+        padding-bottom: 1000px; margin-bottom: -1000px; } 
 #location { margin: 0px 0px; }
-#leftbar { float: right; margin: 0px 10px 0px 10px;} 
+#leftbar { float: right; margin: 0px 10px 0px 10px; width: 148px;} 
 #section80 { float: right;  display: block; margin: -5px 0px -10px 0px;} 
 #section { text-align: right; margin-bottom: -10px ; padding: 0px;} 
 #content {  } 
@@ -25,10 +26,10 @@ body { background-image:url('textures/white-lines.gif'); background-color: #FFFF
 #rarrow { display: inline; text-align: right; font-size: 14px; float: right; 
 		  cursor: pointer; cursor: hand; margin: 0px 0px 0px 0px; }
 #rainbow { colour: #000000 }
-#block {background-color: #FFFF00; float: left; width: 992px; overflow: hidden; 
+#block {background-color: #FFFFFF; float: left; width: 992px; overflow: hidden; 
         padding-bottom: 1000px; margin-bottom: -1000px;}
 #block-text{margin: 10px 20px; color: #000000; text-align: left; margin-right:10px;}
-#block-text a{display:block;}
+#block-text a{display:block; margin-left: 10px;}
 #currate { text-align: right; display: inline-block; font-size: 8px; margin: 0px 8px 0px 0px; 
 		   padding: 0px 5px 0px 0px; float:right; width: 108px; cursor: default;}
 #ratepicker { margin: 0px 10px 0px 10px; -moz-user-select: none; -webkit-user-select: none; 
@@ -44,5 +45,3 @@ input { float: right; background-color: #eeeeee; color: #444; padding: 5px; bord
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-}
-

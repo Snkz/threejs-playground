@@ -6,7 +6,7 @@ body { background-image:url('textures/white-lines.gif'); background-color: #FFFF
 	   font: 11px/19px Verdana, Arial, Helvetica, sans-serif; 
 	   color: #000000; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 
 	   100%; width: 100%; height:100%;}
-	   
+
 #wrapper { margin: 0px; width: 1200px; }
 #header {} 
 #title { float: left; margin: 20px 40px;}
@@ -27,7 +27,7 @@ body { background-image:url('textures/white-lines.gif'); background-color: #FFFF
 		  cursor: pointer; cursor: hand; margin: 0px 0px 0px 0px; }
 #rainbow { colour: #000000 }
 #block {background-color: #FFFFFF; float: left; width: 992px; overflow: hidden; 
-        padding-bottom: 1000px; margin-bottom: -1000px;}
+        padding-bottom: 1000px; margin-bottom: -1000px; display: block;}
 #block-text{margin: 10px 20px; color: #000000; text-align: left; margin-right:10px;}
 #block-text a{display:block; margin-left: 10px;}
 #currate { text-align: right; display: inline-block; font-size: 8px; margin: 0px 8px 0px 0px; 
@@ -37,7 +37,6 @@ body { background-image:url('textures/white-lines.gif'); background-color: #FFFF
 ul li{ text-align: right; list-style-type: none; margin: 0; padding: 0; }
 a { text-decoration: none;}
 a:hover { text-decoration: none; outline:rgba(0,0,0,0.025) solid 2px; }
-input { float: right; background-color: #eeeeee; color: #444; padding: 5px; border: none; margin: 3px; }
 .noselect {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -45,3 +44,4 @@ input { float: right; background-color: #eeeeee; color: #444; padding: 5px; bord
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+

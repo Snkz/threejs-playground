@@ -31,12 +31,14 @@
             varying vec2 vUv;
             varying vec3 vNormal;
             uniform float amp;
+            uniform float mousex;
+            uniform float mousey;
 
 
             void main(void) {
                 vec2 position = vUv;
-				float x = (position.x - 0.5) * 3.0;
-                float y = (position.y - 0.5) * 3.0;
+				float x = (position.x - 0.5) * 1.0;
+                float y = (position.y - 0.5) * 1.0;
                 //float x = position.x * 3.5 - 2.5;
                 //float y = position.y * 2.0 - 1.0;
                 //float cx = position.x;
@@ -66,11 +68,14 @@
                 //float cy =  0.6;
 				//float cx = 0.285;
                 //float cy =  0.01;
-				float cx = 0.74543;
-				float cy = 0.11301;
+				//float cx = 0.74543;
+				//float cy = 0.11301;
 				//float cx = 0.29357170269;
                 //float cy = -0.4885853614;
 				
+                float cy = mousey;
+                float cx = mousex;
+
                 float tempX = 0.0;
                 int i = 0;
                 int runaway = 0;
@@ -99,7 +104,8 @@
 					br = log2(1.75 + float(256) - log2(log2(z))) / log2(256.0);
 
 				}
-			 gl_FragColor = vec4(br, br, 1.0, 1.0);
+			 //gl_FragColor = vec4(br, br, 1.0, 1.0);
+			 gl_FragColor = vec4(abs(br - amp), abs(amp*amp - br*0.75), amp*amp, 1.0);
             }
         </script>
 		<script id="juliaSINE-fs" type="x-shader/x-fragment">
@@ -110,6 +116,8 @@
             varying vec2 vUv;
             varying vec3 vNormal;
             uniform float amp;
+            uniform float mousex;
+            uniform float mousey;
 
 			float cosh(float val)
 			{
@@ -126,10 +134,10 @@
 			}
             void main(void) {
                 vec2 position = vUv;
-				float x = (position.x - 0.5) * 2.0 + 1.0;
-                float y = (position.y - 0.5) * 2.0 - 1.0;
-                //float x = position.x * 3.5 - 2.5;
-                //float y = position.y * 2.0 - 1.0;
+				//float x = (position.x - 0.5) * 2.0 + 1.0;
+                //float y = (position.y - 0.5) * 2.0 - 1.0;
+                float x = position.x * 3.5 - 2.5;
+                float y = position.y * 2.0 - 1.0;
                 //float cx = position.x;
                 //float cy = position.y;
 
@@ -145,10 +153,12 @@
 				
 				int itter = 256;
 				//float cx = 1.0;
-                
-				float cx = 1.2;
-                float cy =  0.5;
 				//float cy =  0.4;
+                
+				//float cx = 1.2;
+                //float cy =  0.5;
+		        float cx = mousex;
+		        float cy =  mousey;
 				
                 float tempX = 0.0;
 				float ctempX = 0.0;
@@ -269,6 +279,12 @@
             scene.fog = new THREE.Fog( 0xcce0ff, 500, 10000 );
             var clock = new THREE.Clock();
 
+            var mouseX = 1.2;
+            var mouseY = 0.5;
+		    //mouseX = 0.74543;
+		    //mouseY = 0.11301;
+            var mouse = false;
+
             // camera
             var camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 10000 );
             camera.position.y = 0;
@@ -319,13 +335,15 @@
             renderer.setClearColor( scene.fog.color );
             document.body.appendChild(renderer.domElement);
 
-            var geometry = new THREE.CubeGeometry(4,4,4);
+            var geometry = new THREE.CubeGeometry(7,7,7);
             //var material = new THREE.MeshBasicMaterial( {color: 0x0000ff} );
 
             // post proc
             var uniforms = {
                 time: { type: "f", value: 1.0 },
                 amp: { type: "f", value: 0.0 },
+                mousex: { type: "f", value: mouseX },
+                mousey: { type: "f", value: mouseY },
                 resolution: { type: "v2", value: new THREE.Vector2() }
             };
 
@@ -366,17 +384,44 @@
                 uniforms.time.value += delta * 2;     
                 uniforms.amp.value = Math.sin(uniforms.time.value);     
 
-                cube.rotation.x += 0.1;
-                cube.rotation.y += 0.01;
+                //cube.rotation.x = 0.5;
+                //cube.rotation.y = -0.5;
 
+                if (mouse) {
+                    uniforms.mousex.value = (mouseX/(window.innerWidth/2)) * 9.42;
+                    uniforms.mousey.value = (mouseY/(window.innerHeight/2)) * 9.42;
+                    mouse = false;
+                }
                 renderer.render(scene, camera);
             }
 
+            
+            function onDocumentMouseMove( event ) {
+            
+                // speed calcs found on web
+            	mouseX = event.clientX - window.innerWidth/2;
+            	mouseY = event.clientY - window.innerHeight/2;
+                mouse = true;
+            
+            };
+            
+            function onDocumentMouseDown( event ) {
+            
+                document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+                document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+            };
+
+            // add remove event listeners on the fly
+            function onDocumentMouseUp( event ) {
+            
+            	document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+            	document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+            };
+            
+            document.addEventListener( 'mousedown', onDocumentMouseDown, false );
             onWindowResize();
             window.addEventListener( 'resize', onWindowResize, false );
             render();
-
-
 
         </script>
     </body>

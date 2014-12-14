@@ -96,9 +96,17 @@
                   <a href="http://www.cs.utah.edu/~elb/folklore/mel.html">Story of /the/ real programmer, classic.</a>
                   <a href="http://simonschreibt.de/gat/homeworld-2-backgrounds/">Sometimes i forget game programmers are geniouses.</a>
                   <a href="http://www.junkship.net/News/2014/02/02/my-god-its-full-of-stars">DirectX? Starfield generation that looks perrff.</a>
+                  <a href="http://www.cs.toronto.edu/~mangas/teaching/320/assignments/a2/Criminisi_cvpr2003.pdf">Inpainting thing we implemented in third year, don't think I appreciated it enough.</a>
+                  <a href="http://en.wikibooks.org/wiki/OpenGL_Programming">Series of opengl tuts, includes voxel stuff.</a>
+                  <a href="https://sites.google.com/site/letsmakeavoxelengine/">High level voxel engine tutorial.</a>
+                  <a href="http://http.developer.nvidia.com/GPUGems3/gpugems3_ch01.html">DirectX shader stuff, looks goooorgeous.</a>
+                  <a href="http://www.flipcode.com/archives/Realtime_Voxel_Landscape_Engines-Part_2_Rendering_the_Landscapes_Structure.shtml">Raytracing overview, i'll never get bored of these.</a>
                   <br/>
 
                   Planet generation, shaders, and hopefully some cameras.
+                  <br/>
+
+                  Limit your sources of information, avoid browsing for the sake of browsing. Retrain yourself to /not/ multitask! 
                   <br/>
                   <br/>
                 </div>
@@ -131,6 +139,8 @@
 	varying vec2 vUv;
 	varying vec3 vNormal;
 	uniform float amp;
+    uniform float mousex;
+    uniform float mousey;
 
 	float cosh(float val)
 	{
@@ -163,8 +173,11 @@
 		int itter = 256;
 		//float cx = 1.0;
 		//float cy =  1.9;
-		float cx = 1.2;
-		float cy =  0.5;
+		//float cx = 1.2;
+		//float cy =  0.5;
+		float cx = mousex;
+		float cy =  mousey;
+	
 	
 		float tempX = 0.0;
 		float ctempX = 0.0;

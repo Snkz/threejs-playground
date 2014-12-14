@@ -29,13 +29,13 @@ body { background-image:url('textures/white-lines.gif'); background-color: #FFFF
 #block {background-color: #FFFFFF; float: left; width: 992px; overflow: hidden; 
         padding-bottom: 1000px; margin-bottom: -1000px; display: block;}
 #block-text{margin: 10px 20px; color: #000000; text-align: left; margin-right:10px;}
-#block-text a{display:block; margin-left: 10px;}
+#block-text a{display:block; margin-left: 10px; width: 100%}
 #currate { text-align: right; display: inline-block; font-size: 8px; margin: 0px 8px 0px 0px; 
 		   padding: 0px 5px 0px 0px; float:right; width: 108px; cursor: default;}
 #ratepicker { margin: 0px 10px 0px 10px; -moz-user-select: none; -webkit-user-select: none; 
 			  -ms-user-select:none; user-select:none;}
 ul li{ text-align: right; list-style-type: none; margin: 0; padding: 0; }
-a { text-decoration: none;}
+a { text-decoration: none; display: block; width: 168px;}
 a:hover { text-decoration: none; outline:rgba(0,0,0,0.025) solid 2px; }
 .noselect {
     -webkit-touch-callout: none;

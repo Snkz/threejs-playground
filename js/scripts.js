@@ -16,11 +16,11 @@ function boostRate(dir) {
     var targetRotationOnMouseDownX = 0;
     var targetRotationY = 0;
     var targetRotationOnMouseDownY = 0;
-    var mouseX = 0;
-    var mouseX = 0;
+    var mouseX = 1.2;
     var mouseXOnMouseDown = 0;
-    var mouseY = 0;
+    var mouseY = 0.5;
     var mouseYOnMouseDown = 0;
+    var mouse = false;
     
     var hoverState = 0;
     
@@ -73,6 +73,8 @@ function boostRate(dir) {
     var uniforms = {
         time: { type: "f", value: 1.0 },
         amp: { type: "f", value: 0.0 },
+        mousex: { type: "f", value: mouseX },
+        mousey: { type: "f", value: mouseY },
         resolution: { type: "v2", value: new THREE.Vector2() }
     };
     
@@ -191,6 +193,7 @@ function boostRate(dir) {
         // speed calcs found on web
     	mouseX = event.clientX - window.innerWidth/2;
     	mouseY = event.clientY - window.innerHeight/2;
+        mouse = true;
     
     
     	targetRotationX = targetRotationOnMouseDownX + ( mouseX - mouseXOnMouseDown ) * 0.20;
@@ -207,9 +210,9 @@ function boostRate(dir) {
     
     function onDocumentMouseOut( event ) {
     
-    	document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
-    	document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
-    	document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+    //	document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+    //	document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+    //	document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
     };
     
     
@@ -240,14 +243,19 @@ function boostRate(dir) {
             var delta = dom_events();
             uniforms.time.value += delta*rate;     
             uniforms.amp.value = Math.sin(uniforms.time.value);     
+            if (mouse) {
+                uniforms.mousex.value = (mouseX/(window.innerWidth/2))*9.42*0.5;
+                uniforms.mousey.value = (mouseY/(window.innerHeight/2))*9.42*0.5;
+                mouse = false;
+            }
         
             sphere.rotation.x += 0.01;
             sphere.rotation.y += 0.02;
             sphere.rotation.z += 0.03;
         
-            group.rotation.y += ( targetRotationX - group.rotation.y ) * 0.05;
-            group.rotation.x += ( targetRotationY - group.rotation.x ) * 0.05;
-        
+        //    group.rotation.y += ( targetRotationX - group.rotation.y ) * 0.05;
+        //    group.rotation.x += ( targetRotationY - group.rotation.x ) * 0.05;
+        //
         
             renderer.render(scene, camera);
         }

@@ -1,25 +1,132 @@
-var rate = 0.25;
-var scale = 0.25;
 
-// after arrow gets clicked 
-function boostRate(dir) {
-    rate = rate + dir*rate*scale;
-}
-    
+<html>
+    <head>
+        <title> WebGL on a 90's page </title>
+    </head>
+    <body style="width: 100%; height 100%;">
+            <div id="icon" style="width: 100%; height:100%;">
+			<!-- ICON JS GEN-->
+			</div>
+	<!-- shadaah -->
+    <script id="vertexShader" type="x-shader/x-vertex">
+        precision highp float;
+
+        varying vec2 vUv;
+        attribute float displacement;
+        varying vec3 vNormal;
+        uniform float amp;
+
+        void main() {
+            vNormal = normal;
+            vUv = uv;
+            vec3 newPos = position; // + normal * vec3(displacement * amp);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0 );
+        }
+
+    </script>
+	<script id="juliaSINE-fs" type="x-shader/x-fragment">
+	precision highp float;
+
+	uniform float time;
+	uniform vec2 resolution;
+	varying vec2 vUv;
+	varying vec3 vNormal;
+	uniform float amp;
+    uniform float mousex;
+    uniform float mousey;
+
+	float cosh(float val)
+	{
+		float tmp = exp(val);
+		float cosH = (tmp + 1.0 / tmp) / 2.0;
+		return cosH;
+	}
+	
+	float sinh(float val)
+	{
+		float tmp = exp(val);
+		float sinH = (tmp - 1.0 / tmp) / 2.0;
+		return sinH;
+	}
+	void main(void) {
+		vec2 position = vUv;
+		float x = (position.x - 0.5) * 9.42;
+		float y = (position.y - 0.5) * 9.42;
+	
+		float hue;
+		float saturation;
+		float value;
+		float hueRound;
+		int hueIndex;
+		float f;
+		float p;
+		float q;
+		float t;
+	
+		int itter = 256;
+		//float cx = 1.0;
+		//float cy =  1.9;
+		//float cx = 1.2;
+		//float cy =  0.5;
+		float cx = mousex;
+		float cy =  mousey;
+	
+	
+		float tempX = 0.0;
+		float ctempX = 0.0;
+		int i = 0;
+		int runaway = 0;
+		float z = 0.0;
+		float zf = 0.0;
+	
+	
+		for (int i=0; i < 256; i++) {
+	
+			tempX = sin(x) * cosh(y);
+			y = cos(x) * sinh(y);
+			x = tempX;
+	
+			ctempX = x * float(cx) - y * float(cy);
+			y = x * float(cy) + y * float(cx);
+			x = ctempX;
+			z = x*x + y*y;
+			if (runaway == 0 && z > 2500.0) {
+				runaway = i;
+				zf = sqrt(z);
+				//break;
+			}
+		}
+		float br = 0.0;
+		if (runaway != 0) {
+			//NIC COLOURING
+			//float z = sqrt(xf*xf + yf*yf);
+			br = log2(1.75 + float(runaway) - log2(log2(zf))) / log2(float(itter));
+	
+		} else {
+			//gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+			br = log2(1.75 + float(itter) - log2(log2(z))) / log2(float(itter));
+			br = 1.0;
+	
+		}
+		gl_FragColor = vec4(abs(br - amp), abs(amp*amp - br*0.75), amp*amp, 1.0);
+	}
+
+	</script>
+
+	<!-- j whattt? -->
+	<script src="js/three.min.js"></script>
+    <script>
 (function() {
     var mahname = "icon";
     var div = document.getElementById(mahname); 
     
+    var rate = 0.25;
+    var scale = 0.25;
+
     var scene = new THREE.Scene();
     var clock = new THREE.Clock();
-    var targetRotationX = 0;
-    var targetRotationOnMouseDownX = 0;
-    var targetRotationY = 0;
-    var targetRotationOnMouseDownY = 0;
     var mouseX = 1.2;
-    var mouseXOnMouseDown = 0;
     var mouseY = 0.5;
-    var mouseYOnMouseDown = 0;
     var mouse = false;
     
     var hoverState = 0;
@@ -66,7 +173,7 @@ function boostRate(dir) {
     plane.rotation.x = Math.PI;
     plane.position.set(0,0,-2);
     
-    var geometry = new THREE.SphereGeometry(2,25,25);
+    var geometry = new THREE.SphereGeometry(2.5,50,50);
     //var material = new THREE.MeshBasicMaterial( {color: 0x0000ff} );
     
     // post proc
@@ -106,87 +213,11 @@ function boostRate(dir) {
     //scene.add(plane);
     scene.add(group);
     
-    // sstrrrobe eeeffeectt (make this live outside of threejs scene soon)
-    function domUpdater(amp, cls, bkg) {
-    	var  fontElems = document.querySelectorAll(cls);
-    	var red = Math.floor((Math.abs(1.0 - amp)*255))
-    	var green = Math.floor(Math.abs(amp*amp - 0.75)*255);
-    	var blue = Math.floor((amp*amp)*255)
-    	var alpha = 0.1;
-    	for (var i = 0; i < fontElems.length; i++) {
-    		fontElems[i].style.color = "rgb(" + red + "," + green + "," + blue + ")";
-    		if (bkg === true) {
-    			fontElems[i].style.background = "rgba(" + red + "," 
-    													+ green + "," 
-    													+ blue + "," 
-    													+ alpha + ")";
-    			hoverState = 1;
-    		}
-    	}
-    }
-    
-    // stops strobing in links when hovered? why was this an issue?
-    function domCleaner(cls) {
-    	if (hoverState == 0) {
-    		return;
-    	}
-    	var  fontElems = document.querySelectorAll(cls);
-    	for (var i = 0; i < fontElems.length; i++) {
-    		fontElems[i].style.background = "";
-    		fontElems[i].style.color = "";
-    	}
-    	
-    	hoverState = 0;
-    }
-    
-    // for the numbers 
-    function domFiller(amp, cls) {
-    	var  fontElems = document.querySelectorAll(cls);
-    	for (var i = 0; i < fontElems.length; i++) {
-    		fontElems[i].innerHTML = "" + amp; 
-    	}
-    }
-    
-    function dom_events() {
-    
-        var delta = clock.getDelta();
-    
-        time += delta*rate;     
-        amp = Math.sin(time);
-    
-        // random dom changing
-    	domCleaner("a");
-    	domUpdater(amp, ".rainbow", false);
-    	domUpdater(amp, "a:hover", true);
-    	domUpdater(amp, "#block", true);
-    	domUpdater(amp, "#block-blog", true);
-    	domUpdater(amp, "#currate", true);
-    	domUpdater(amp, "#larrow", false);
-    	domUpdater(amp, "#rarrow", false);
-    	domFiller(amp, "#currate");
-
-        return delta;
-    }
-    
     // click events
     function onDocumentMouseDown( event ) {
-    
-        //event.preventDefault();
-    
-        // start listening, add all the events we care about
-        // mouse move = change orb rot speed
         document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-        // up or out means when should stop spinning AND stop listening 
         document.addEventListener( 'mouseup', onDocumentMouseUp, false );
-        document.addEventListener( 'mouseout', onDocumentMouseOut, false );
     
-    
-        // start it out
-        mouseXOnMouseDown = event.clientX - window.innerWidth/2;
-        mouseYOnMouseDown = event.clientY - window.innerHeight/2;
-    
-        targetRotationOnMouseDownX = targetRotationX;
-        targetRotationOnMouseDownY = targetRotationY;
     };
     
     function onDocumentMouseMove( event ) {
@@ -195,35 +226,24 @@ function boostRate(dir) {
     	mouseX = event.clientX - window.innerWidth/2;
     	mouseY = event.clientY - window.innerHeight/2;
         mouse = true;
-    
-    
-    	targetRotationX = targetRotationOnMouseDownX + ( mouseX - mouseXOnMouseDown ) * 0.20;
-    	targetRotationY = targetRotationOnMouseDownY + ( mouseY - mouseYOnMouseDown ) * 0.20;
     };
     
     // add remove event listeners on the fly
     function onDocumentMouseUp( event ) {
     
+        console.log("current cx: ", uniforms.mousex.value, "current cy: ", uniforms.mousey.value);
     	document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
     	document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
-    	document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
-    };
-    
-    function onDocumentMouseOut( event ) {
-    
-    //	document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
-    //	document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
-    //	document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
     };
     
     
-    document.onload = addEventListener( 'mousedown', onDocumentMouseDown, false );
+    document.addEventListener( 'mousedown', onDocumentMouseDown, false );
     
     function createRenderer() {
         // rendererererer define loc/size/transp
-        var renderer = new THREE.WebGLRenderer( { alpha: true });
+        var renderer = new THREE.WebGLRenderer();
         renderer.setSize(div.offsetWidth, div.offsetHeight);
-        renderer.setClearColor( 0x000000, 0 );
+        renderer.setClearColor( 0x000000, 1 );
         div.appendChild(renderer.domElement);
         
         // found on web, hanldes reprojection of scene
@@ -241,7 +261,7 @@ function boostRate(dir) {
             requestAnimationFrame(render);
             
             // clock does weird shit when asked for delta twice
-            var delta = dom_events();
+            var delta = clock.getDelta();
             uniforms.time.value += delta*rate;     
             uniforms.amp.value = Math.sin(uniforms.time.value);     
             if (mouse) {
@@ -250,9 +270,9 @@ function boostRate(dir) {
                 mouse = false;
             }
         
-            sphere.rotation.x += 0.01;
-            sphere.rotation.y += 0.02;
-            sphere.rotation.z += 0.03;
+            sphere.rotation.x += 0.001;
+            sphere.rotation.y += 0.002;
+            sphere.rotation.z += 0.003;
         
         //    group.rotation.y += ( targetRotationX - group.rotation.y ) * 0.05;
         //    group.rotation.x += ( targetRotationY - group.rotation.x ) * 0.05;
@@ -277,7 +297,6 @@ function boostRate(dir) {
         // cant create 3D scene soo ..
         function noGLRender() {
             requestAnimationFrame(noGLRender);
-            dom_events()
         };
 
         noGLRender();
@@ -288,3 +307,9 @@ function boostRate(dir) {
 
 
 })()
+    </script>
+
+    </div>
+    </body>
+</html>
+

@@ -1,4 +1,3 @@
-
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="style.css">
@@ -45,13 +44,31 @@
 			    		<h4 id="section" class="rainbow"> links </h4>
 			    		<ul>
 			    			<li>
+                                <a href="index.html"> blog </a>
+			    			</li>
+			    			<li>
                                 <a href="start.html"> start </a>
 			    			</li>
 			    			<li>
                                 <a href="fall2014.html"> fall 2014 </a>
 			    			</li>
                             <li>
-                                <a href="index.html"> winter 2014 </a>
+                                <a href="winter2014.html"> winter 2014 </a>
+			    			</li>
+                            <li>
+                                <a href="spring2015.html"> spring 2015 </a>
+			    			</li>
+                            <li>
+                                <a href="summer2015.html"> summer 2015 </a>
+			    			</li>
+                            <li>
+                                <a href="fall2015.html"> fall 2015 </a>
+			    			</li>
+                            <li>
+                                <a href="winter2015.html"> winter 2015 </a>
+			    			</li>
+                            <li>
+                                <a href="summer2021.html"> summer 2021 </a>
 			    			</li>
 			    		</ul>
 			    	</div>
@@ -60,15 +77,23 @@
 			    		<h4 id="section" class="rainbow"> on the ground </h4>
 			    		<ul>
 			    			<li>
-                            <del><p id= "location"> uoft: bahen center </p></del>
+                            <del><p id= "location"> tdot: bahen center </p></del>
 			    			</li>
 			    			<li>
-			    				<p id="location"> columbia: SEL lab </p>
+			    			<del><p id="location"> brooklyn: outpost </p></del>
 			    			</li>
 			    			<li>
-			    				<p id="location"> brooklyn: outpost </p>
+			    			<del><p id="location"> sf: another cafe</p></del>
 			    			</li>
-
+			    			<li>
+			    			<del><p id="location"> sf: social study</p></del>
+			    			</li>
+			    			<li>
+			    			    <p id="location"> vancouver: who knows</p>
+			    			</li>
+			    			<li>
+			    				<p id="location"> work: relic</p>
+			    			</li>
 			    		</ul>
 			    	</div>
 
@@ -90,7 +115,7 @@
 			    </div>
             </div>
             <div id="block">
-                <div id="block-text">
+                <div id="block-text" class="reselect">
                   <p> Fall 2014: <p>
                   <a href="https://learn.adafruit.com/freq-show-raspberry-pi-rtl-sdr-scanner/overview">RPI as radio tuner.</a>
                   <a href="https://npmjs.org/package/mongoose-rollback">My rollback machine for mongoose, really need people to break it.</a>
@@ -142,6 +167,8 @@
 	varying vec2 vUv;
 	varying vec3 vNormal;
 	uniform float amp;
+    uniform float mousex;
+    uniform float mousey;
 
 	float cosh(float val)
 	{
@@ -174,8 +201,11 @@
 		int itter = 256;
 		//float cx = 1.0;
 		//float cy =  1.9;
-		float cx = 1.2;
-		float cy =  0.5;
+		//float cx = 1.2;
+		//float cy =  0.5;
+		float cx = mousex;
+		float cy =  mousey;
+	
 	
 		float tempX = 0.0;
 		float ctempX = 0.0;

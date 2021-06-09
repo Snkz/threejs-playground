@@ -28,6 +28,14 @@ body { background-image:url('textures/white-lines.gif'); background-color: #FFFF
 #rainbow { colour: #000000 }
 #block {background-color: #FFFFFF; float: left; width: 992px; overflow: hidden; 
         padding-bottom: 1000px; margin-bottom: -1000px; display: block;}
+#block-blog {background-color: #FFFFFF; float: left; width: 992px; overflow: hidden; display: block;}
+.code {
+    font-family: monospace;
+    margin-left: 20px; 
+    margin-right: 100px; 
+}
+
+#seperator {background-color: #FFFFFF !important; padding-bottom: 20px; }
 #block-text{margin: 10px 20px; color: #000000; text-align: left; margin-right:10px;}
 #block-text a{display:block; margin-left: 10px; width: 100%}
 #currate { text-align: right; display: inline-block; font-size: 8px; margin: 0px 8px 0px 0px; 
@@ -44,4 +52,15 @@ a:hover { text-decoration: none; outline:rgba(0,0,0,0.025) solid 2px; }
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
 
+.reselect {
+    -webkit-touch-callout: text;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+.inlinea { display: inline !important; width: auto !important; margin: 0px !important;}

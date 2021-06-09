@@ -37,10 +37,10 @@
 
             void main(void) {
                 vec2 position = vUv;
-				float x = (position.x - 0.5) * 1.0;
-                float y = (position.y - 0.5) * 1.0;
-                //float x = position.x * 3.5 - 2.5;
-                //float y = position.y * 2.0 - 1.0;
+				//float x = (position.x - 0.5) * 1.0;
+                //float y = (position.y - 0.5) * 1.0;
+                float x = position.x * 3.5 - 2.5;
+                float y = position.y * 2.0 - 1.0;
                 //float cx = position.x;
                 //float cy = position.y;
 
@@ -134,10 +134,10 @@
 			}
             void main(void) {
                 vec2 position = vUv;
-				//float x = (position.x - 0.5) * 2.0 + 1.0;
-                //float y = (position.y - 0.5) * 2.0 - 1.0;
-                float x = position.x * 3.5 - 2.5;
-                float y = position.y * 2.0 - 1.0;
+				float x = (position.x) * 2.0 + 1.0;
+                float y = (position.y) * 2.0 - 1.0;
+                //float x = position.x * 3.5 - 2.5;
+                //float y = position.y * 2.0 - 1.0;
                 //float cx = position.x;
                 //float cy = position.y;
 
@@ -281,8 +281,8 @@
 
             var mouseX = 1.2;
             var mouseY = 0.5;
-		    //mouseX = 0.74543;
-		    //mouseY = 0.11301;
+		    mouseX = 0.74543;
+		    mouseY = 0.11301;
             var mouse = false;
 
             // camera
@@ -356,7 +356,8 @@
                 attributes: attributes,
                 vertexShader: document.getElementById( 'vertexShader' ).textContent,
                 //fragmentShader: document.getElementById( 'fragmentShader' ).textContent
-				fragmentShader: document.getElementById( 'juliaSINE-fs' ).textContent
+				//fragmentShader: document.getElementById( 'juliaSINE-fs' ).textContent
+				fragmentShader: document.getElementById( 'julia-fs' ).textContent
             });
 
             var cube = new THREE.Mesh(geometry, material);
@@ -388,8 +389,8 @@
                 //cube.rotation.y = -0.5;
 
                 if (mouse) {
-                    uniforms.mousex.value = (mouseX/(window.innerWidth/2)) * 9.42;
-                    uniforms.mousey.value = (mouseY/(window.innerHeight/2)) * 9.42;
+                    uniforms.mousex.value = (mouseX/(window.innerWidth/2)/1.5);
+                    uniforms.mousey.value = (mouseY/(window.innerHeight/2)/1.5);
                     mouse = false;
                 }
                 renderer.render(scene, camera);
